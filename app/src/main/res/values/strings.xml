@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">trueSTART</string>
+    <string name="select_alarm_time_label">Alarm Time:</string>
+    <string name="select_alarm_time_hint">Click to select your alarm time</string>
+    <string name="select_forecast_time_label">Forecast Time:</string>
+    <string name="select_forecast_time_hint">Click to select the forecast time</string>
+    <string name="enter_feature_name_label">Feature:</string>
+    <string name="select_feature_name_hint">Enter feature name</string>
+    <string name="enter_feature_threshold_label">Threshold:</string>
+    <string name="enter_feature_threshold_hint">Enter feature threshold</string>
+    <string name="enter_probability_label">Probability:</string>
+    <string name="enter_probability_hint">Enter probability value</string>
+    <string name="select_operator_label">Operator:</string>
+    <string name="select_operator_hint">Select operator</string>
+    <array name="operators">
+        <item>greater_than</item>
+        <item>less_than</item>
+    </array>
+    <array name="features">
+        <item>wind_speed_at_10m</item>
+    </array>
+</resources>

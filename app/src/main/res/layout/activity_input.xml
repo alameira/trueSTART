@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/alarmTime"
+        android:text="@string/select_alarm_time_label" />
+    <EditText
+        android:id="@+id/alarmTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="@string/select_alarm_time_hint">
+    </EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/forecastTime"
+        android:text="@string/select_forecast_time_label" />
+    <EditText
+        android:id="@+id/forecastTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="@string/select_forecast_time_hint">
+    </EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/featureName"
+        android:text="@string/enter_feature_name_label" />
+    <Spinner
+        android:id="@+id/featureName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/select_feature_name_hint"
+        android:entries="@array/features">
+    </Spinner>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/featureThreshold"
+        android:text="@string/enter_feature_threshold_label" />
+    <EditText
+        android:id="@+id/featureThreshold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="@string/enter_feature_threshold_hint">
+    </EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/probability"
+        android:text="@string/enter_probability_label" />
+    <EditText
+        android:id="@+id/probability"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="@string/enter_probability_hint">
+    </EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/operator"
+        android:text="@string/select_operator_label" />
+    <Spinner
+        android:id="@+id/operator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/select_operator_hint"
+        android:entries="@array/operators"/>
+
+    <Button
+        android:id="@+id/scheduleAlarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Schedule Alarm" />
+</LinearLayout>
