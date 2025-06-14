@@ -2,22 +2,15 @@ package dev.mc.truestart
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlarmManager
-import android.app.PendingIntent
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
-import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
 import java.util.Calendar
 
 class InputActivity: AppCompatActivity() {
@@ -29,14 +22,15 @@ class InputActivity: AppCompatActivity() {
     private lateinit var probability: EditText
     private lateinit var operator: Spinner
     private lateinit var scheduleAlarm: Button
+    private lateinit var alarmManager: AlarmManager
 
-    private val prefsKey = "alarms_list"
-    private val prefsName = "AlarmPrefs"
     private val tag = "InputActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input)
+
+        alarmManager = AlarmManager(this)
 
         alarmTime = findViewById(R.id.alarmTime)
         forecastTime = findViewById(R.id.forecastTime)
@@ -47,33 +41,10 @@ class InputActivity: AppCompatActivity() {
         scheduleAlarm = findViewById(R.id.scheduleAlarm)
 
         alarmTime.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-
-            val timePicker = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-                alarmTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute))
-            }, hour, minute, true)
-
-            timePicker.show()
+            pickDateTime(alarmTime)
         }
         forecastTime.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-
-            val timePicker = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-                calendar.apply {
-                    set(Calendar.HOUR_OF_DAY, selectedHour)
-                    set(Calendar.MINUTE, selectedMinute)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-
-                forecastTime.setText(SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'").format(calendar.time))
-            }, hour, minute, true)
-
-            timePicker.show()
+            pickDateTime(forecastTime)
         }
 
         scheduleAlarm.setOnClickListener {
@@ -94,48 +65,26 @@ class InputActivity: AppCompatActivity() {
 
     @SuppressLint("ScheduleExactAlarm")
     private fun createAlarm(jsonObject: JSONObject) {
-        val (selectedHour, selectedMinute) = jsonObject.getString("alarmTime").split(":").map { it.toInt() }
-
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, selectedHour)
-            set(Calendar.MINUTE, selectedMinute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-
-            if (before(Calendar.getInstance())) {
-                add(Calendar.DATE, 1)
-            }
-        }
+        alarmManager.addAlarmToStore(jsonObject)
 
         Toast.makeText(this, "Alarm set for $jsonObject", Toast.LENGTH_SHORT).show()
-
-        scheduleAlarm(calendar)
-
-        addAlarmToPreferences(jsonObject)
     }
 
-    private fun scheduleAlarm(calendar: Calendar) {
-        val intent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            calendar.timeInMillis.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+    private fun pickDateTime(editTextView: EditText) {
+        val currentDateTime = Calendar.getInstance()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+        val startMinute = currentDateTime.get(Calendar.MINUTE)
 
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
-        try {
-            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        } catch (e: SecurityException) {
-            e.message?.let { Log.e(tag, it) }
-        }
-    }
+        DatePickerDialog(this, { _, year, month, day ->
+            TimePickerDialog(this, { _, hour, minute ->
+                val pickedDateTime = Calendar.getInstance()
+                pickedDateTime.set(year, month, day, hour, minute)
 
-    private fun addAlarmToPreferences(jsonObject: JSONObject) {
-        val prefs = getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        val jsonArray = JSONArray(prefs.getString(prefsKey, "[]"))
-        jsonArray.put(jsonObject)
-        prefs.edit { putString(prefsKey, jsonArray.toString()) }
+                editTextView.setText(alarmManager.getFormattedTimeString(pickedDateTime.time))
+            }, startHour, startMinute, false).show()
+        }, startYear, startMonth, startDay).show()
     }
 }

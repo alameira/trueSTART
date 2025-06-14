@@ -10,7 +10,7 @@ class AlarmAdapter(private val alarms: List<String>, private val onLongClick: (S
     RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
 
     class AlarmViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val alarmTime: TextView = view.findViewById(R.id.alarmTime)
+        val alarm: TextView = view.findViewById(R.id.alarm)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
@@ -20,10 +20,10 @@ class AlarmAdapter(private val alarms: List<String>, private val onLongClick: (S
     }
 
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
-        val time = alarms[position]
-        holder.alarmTime.text = alarms[position]
+        val alarm = alarms[position]
+        holder.alarm.text = alarms[position]
         holder.itemView.setOnLongClickListener {
-            onLongClick(time, position)
+            onLongClick(alarm, position)
             true
         }
     }
